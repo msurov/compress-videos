@@ -66,7 +66,7 @@ class CompressVideoFiles:
     nfiles = len(files)
 
     for i, f in enumerate(files, start=1):
-      print(f'[info] [{i}/{nfiles}] Processing {f}')
+      print(f'[{i}/{nfiles}] Processing {f}')
       self.compress_video(f, dstpath)
 
     return 0
@@ -142,13 +142,13 @@ class CompressVideoFiles:
         runresult = self.run_ffmpeg_compress(inp, outp, codec)
         if runresult.returncode == 0:
           self.codec = codec
-          print('using codec parameters: ', *self.codec)
+          print('  [info] using codec parameters: ', *self.codec)
           break
     else:
       runresult = self.run_ffmpeg_compress(inp, outp, self.codec)
 
     if runresult.returncode != 0:
-      print(f'  - can\'t compress file {inp}, because of the error:')
+      print(f'  [error] can\'t compress file {inp}, because of the error:')
       print(runresult.stderr)
       return False
 
@@ -157,15 +157,15 @@ class CompressVideoFiles:
     compression_ratio = outpsz / inpsz
     Mb = 1024**2
     if compression_ratio > 0.9 or inpsz - outpsz < 2 * Mb:
-      print(f'  - the compression is too small: '
+      print(f'  [info] the compression is too small: '
           f'from {inpsz/Mb:.1f}Mb to {outpsz/Mb:.1f}Mb, skpping')
       remove(outp)
       return False
 
     shutil.move(outp, inp)
-    print(f'  - file compressed: {inpsz/Mb:.1f}Mb -> {outpsz/Mb:.1f}Mb')
+    print(f'  [info] file compressed: {inpsz/Mb:.1f}Mb -> {outpsz/Mb:.1f}Mb')
     tend = time.time()
-    print(f'  - done in {tend - tstart:.1f}sec')
+    print(f'  [info] done in {tend - tstart:.1f}sec')
     return True
 
 if __name__ == '__main__':
